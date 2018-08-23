@@ -1,0 +1,86 @@
+{
+    "Id": "ActionTemplates-103",
+    "Name": "AWS Cloudfront Cache Invalidation",
+    "Description": "Invalidate AWS Cloudfront cache. This template uses the AWS CLI tool. ALL step fields need to be populated for this template to work.\n\nAWS CLI needs to be installed on your deployment server for this to work properly:\nhttps://aws.amazon.com/cli/",
+    "ActionType": "Octopus.Script",
+    "Version": 1,
+    "CommunityActionTemplateId": null,
+    "Properties": {
+      "Octopus.Action.Script.Syntax": "PowerShell",
+      "Octopus.Action.Script.ScriptSource": "Inline",
+      "Octopus.Action.Script.ScriptBody": "Write-Host \"Setting up AWS profile environment\"\naws configure set aws_access_key_id $AccessKey --profile $CredentialsProfileName\naws configure set aws_secret_access_key $SecretKey --profile $CredentialsProfileName\naws configure set default.region $Region --profile $CredentialsProfileName\naws configure set preview.cloudfront true --profile $CredentialsProfileName\n\nWrite-Host \"Initiating AWS cloudfront invalidation of the following paths:\"\nWrite-Host $InvalidationPaths\naws cloudfront create-invalidation --profile $CredentialsProfileName --distribution-id $DistributionId --paths $InvalidationPaths\n\nWrite-Host \"Please note that it may take up to 15-20 minutes for AWS to complete the cloudfront cache invalidation\""
+    },
+    "Parameters": [
+      {
+        "Id": "8a9b231d-304b-44ab-adda-94c01bc8b1fc",
+        "Name": "CredentialsProfileName",
+        "Label": "AWS credentials profile name",
+        "HelpText": "Used to store your AWS credentials to: ~/.aws/\n\nHAS TO BE UNIQUE - check that no other Octopus projects is using the same AWS credential profile name.",
+        "DefaultValue": "",
+        "DisplaySettings": {
+          "Octopus.ControlType": "SingleLineText"
+        },
+        "Links": {}
+      },
+      {
+        "Id": "d2cbc9ac-a02c-4b72-a52d-a63fb1814cd0",
+        "Name": "Region",
+        "Label": "Region",
+        "HelpText": "AWS Cloudfront Region",
+        "DefaultValue": "",
+        "DisplaySettings": {
+          "Octopus.ControlType": "SingleLineText"
+        },
+        "Links": {}
+      },
+      {
+        "Id": "db4225fa-ce3e-42d7-bcec-5b3b499cc274",
+        "Name": "DistributionId",
+        "Label": "Distribution Id",
+        "HelpText": "AWS Cloudfront Distribution Id",
+        "DefaultValue": "",
+        "DisplaySettings": {
+          "Octopus.ControlType": "SingleLineText"
+        },
+        "Links": {}
+      },
+      {
+        "Id": "4ce47828-3481-4268-b79a-307e3052aca1",
+        "Name": "AccessKey",
+        "Label": "Access Key",
+        "HelpText": "AWS Access Key",
+        "DefaultValue": "",
+        "DisplaySettings": {
+          "Octopus.ControlType": "SingleLineText"
+        },
+        "Links": {}
+      },
+      {
+        "Id": "e458502a-8422-4323-9a72-6a8b20d0bbe3",
+        "Name": "SecretKey",
+        "Label": "Secret Key",
+        "HelpText": "AWS Secret Key",
+        "DefaultValue": "",
+        "DisplaySettings": {
+          "Octopus.ControlType": "SingleLineText"
+        },
+        "Links": {}
+      },
+      {
+        "Id": "30e9750f-a35e-41db-9bc6-867ddf4185f5",
+        "Name": "InvalidationPaths",
+        "Label": "Invalidation Paths",
+        "HelpText": "Space-delimited list of paths to invalidate.\n\nFor example: \n/index.html /images/*",
+        "DefaultValue": "",
+        "DisplaySettings": {
+          "Octopus.ControlType": "MultiLineText"
+        },
+        "Links": {}
+      }
+    ],
+    "$Meta": {
+      "ExportedAt": "2018-08-23T15:43:55.138Z",
+      "OctopusVersion": "4.1.4",
+      "Type": "ActionTemplate"
+    }
+  }
